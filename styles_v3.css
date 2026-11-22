@@ -45,7 +45,7 @@
 .startBtn {
     color:black; background-color: transparent; border-style:none; position: absolute;
     font-size: 2vh; bottom:0%; left:50%; translate: -50%; animation: blinker 2s linear infinite;
-    cursor: url("pointer.cur") 6 0, auto; padding: 0% 10%
+    cursor: none; padding: 0% 10%
 }
   @keyframes blinker {
     50% {
@@ -54,7 +54,7 @@
 }
 
 .btnScreen2 {
-    color: white; background-color: transparent; border: 1px white solid;  margin: 0px 1vw; padding: 0px 4vh; translate: 20% 50%; cursor: url("pointer.cur") 6 0, auto; font-size: 2vh;
+    color: white; background-color: transparent; border: 1px white solid; padding: 0vw 3vw; translate: -50% 50%; cursor: none; font-size: 2vh;
 }
 
 .btnScreen2:hover {
@@ -65,5 +65,184 @@
 }
 
 .restartBtn {
-    position: absolute; right: 5%; margin: 0px; font-size: 1.9vh;
+    position: absolute; left: 92%; margin: 0px;
+}
+
+.soundBtn {
+    position: absolute; left: 9%; margin: 0px;
+}
+
+.musicBtn {
+    position: absolute; left: 23%; margin: 0px;
+}
+
+#screen1,
+#screen2 {
+    width:100%;
+    height:100%;
+}
+
+/* Configuration du grand curseur volant */
+#customCursor {
+    position: fixed;
+    width: round(nearest, 3vh, 17px);
+    height: auto;
+    aspect-ratio: 1;
+    background-image: url("assets/pointer.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none; /* Permet de cliquer à travers le div */
+    z-index: 10000;
+    display: none; /* Masqué par défaut, géré par JS */
+    transform: translate(-1.5vh,0); /* Point d'ancrage (hotspot 0 0) */
+    image-rendering: crisp-edges;
+    /*image-rendering: pixelated;*/
+}
+
+/* =========================
+   SYMBOLES MANETTE
+   Affichés uniquement quand une manette est détectée
+   (classe "gamepadDetected" posée sur <body> par main.js)
+   ========================= */
+.gpOnly {
+    display: none;
+}
+
+body.gamepadDetected .gpOnly {
+    display: inline-block;
+}
+
+body.gamepadDetected .kbOnly {
+    display: none;
+}
+
+/* libellés manette de la top bar, posés à côté des boutons (positionnés en absolu
+   comme eux : sound 9%, music 23%, restart 92%, tous centrés via translate -50%) */
+.gpLabelSound, .gpLabelMusic, .gpLabelRestart {
+    color: white; background-color: transparent; position: absolute;
+    font-size: 1.6vh; translate: 0 50%;
+}
+.gpLabelSound   { left: 13%; }
+.gpLabelMusic   { left: 27%; }
+.gpLabelRestart { left: 96%; font-size: 2.4vh; } /* symbole View : réduit de 25 % */
+
+/* glyphes manette de la bottom bar agrandis (x2 : Y, B, LT, RT)
+   - .inst_arrow.gpBig : les touches encadrées (boîte élargie en conséquence)
+   - .gpBig seul : le glyphe Y, seul autour des guillemets */
+.inst_arrow.gpBig { width: 5vh; height: 5vh; font-size: 3.2vh; }
+.gpBig { font-size: 3.2vh; }
+
+/* en mode manette, les glyphes LT / RT / B de la bottom bar s'affichent
+   sans encadrement (le cadre vient de la classe générique .inst_arrow) */
+body.gamepadDetected .gpOnly .inst_arrow {
+    border: none;
+}
+
+/* =========================
+   APPAREILS TACTILES
+   ========================= */
+/* instructions masquées (textes + symboles + boîtes encadrées d'un coup) */
+body.touchDetected .instruction1,
+body.touchDetected .instruction2 {
+    display: none;
+}
+
+/* bouton Start géant de l'écran d'intro, tactile uniquement */
+#startTouchBtn {
+    display: none;
+    position: absolute; top: 45%; left: 50%;
+    translate: -50% -50%;
+    width: 34vh; height: 7vh;
+    color: white; font-size: 4vh;
+    background-color: rgba(0, 0, 0, 0.55);
+    border: 2px solid white;
+    border-radius: 3.5vh;
+    cursor: none;
+}
+body.touchDetected #startTouchBtn { display: block; }
+body.touchDetected .startBtn { display: none; } /* un seul appel à l'action en mode tactile */
+
+/* contrôles de conduite : boutons tactiles (dans #screen2) */
+#touchControls {
+    display: none;
+}
+body.touchDetected #touchControls {
+    display: block;
+}
+
+/* bottom bar (instructions + logo) masquée en mode tactile : libère l'écran */
+body.touchDetected .bottomBar {
+    display: none;
+}
+
+/* en mode tactile, l'aire d'intro occupe aussi la place libérée en bas */
+body.touchDetected .animBG {
+    bottom: 0;
+}
+
+/* bouton plein écran : haut gauche, sous la top bar (topBar occupe le haut 10%) */
+#fullscreenTouchBtn {
+    display: none;
+    position: fixed; top: 11%; left: 2%;
+    width: 7vh; height: 7vh;
+    color: white; font-size: 3.2vh; line-height: 1;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 1.5vh;
+    touch-action: none; user-select: none; -webkit-user-select: none;
+    z-index: 500;
+    cursor: none;
+}
+body.touchDetected #fullscreenTouchBtn { display: block; }
+
+/* groupes de conduite : direction (axe horizontal, bas gauche),
+   pédales (axe vertical, bas droite) */
+#steerBtns, #pedalBtns {
+    position: fixed; bottom: 5%;
+    display: flex; gap: 3vh;
+    z-index: 500;
+}
+#steerBtns { left: 4%; }
+#pedalBtns { right: 4%; flex-direction: column; }
+
+/* boutons de conduite : cercles semi-transparents (taille x1.75) */
+.touchDriveBtn {
+    width: 22.75vh; height: 22.75vh;
+    border-radius: 50%;
+    color: white; font-size: 10.5vh; line-height: 1;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    touch-action: none; user-select: none; -webkit-user-select: none;
+    cursor: none;
+}
+.touchDriveBtn:active {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* bouton flip placé à gauche des pédales, aligné sur leur axe horizontal (taille x1.75) */
+#flipTouchBtn {
+    position: fixed; right: 21%; bottom: 5%;
+    width: 21vh; height: 21vh;
+    border-radius: 50%;
+    color: white; font-size: 10.5vh; line-height: 1;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    touch-action: none; user-select: none; -webkit-user-select: none;
+    z-index: 500;
+    cursor: none;
+}
+
+/* appareil en affichage vertical (portrait) : boutons de conduite réduits
+   d'un facteur 2.5 environ (plein écran volontairement exclu). Le flip est
+   recalé contre les pédales, devenues plus étroites, pour éviter le chevauchement. */
+@media (orientation: portrait) {
+    .touchDriveBtn { width: 9.1vh; height: 9.1vh; font-size: 4.2vh; }
+    #steerBtns, #pedalBtns { gap: 1.2vh; }
+    /* plein écran réduit d'un facteur 1.5 en portrait */
+    #fullscreenTouchBtn { width: 4.7vh; height: 4.7vh; font-size: 2.1vh; }
+    #flipTouchBtn {
+        width: 8.4vh; height: 8.4vh;
+        font-size: 4.2vh;
+        right: calc(4% + 10.5vh);
+    }
 }

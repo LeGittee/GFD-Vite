@@ -12,7 +12,8 @@ export default defineConfig({
     wasm()
   ],
   base: './',
-    build: {
+    build: { 
+      target: "ES2022",
       emptyOutDir: true,
       rollupOptions: {
         treeshake: false
