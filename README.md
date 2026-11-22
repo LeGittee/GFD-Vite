@@ -1,2 +1,2 @@
 # GFD-Vite
-An attempt at recreating a car game that runs in a browser
+This is the html remake of a little sandbox browser game that used to run with the shockwave plugin
