@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GFDVite</title>
+  <script type="module" crossorigin src="./assets/index-f8Tl439-.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-D3NVui7g.css">
+</head>
+
+
+<body style="background-color:black">
+
+
+<!-- =========================
+     SCREEN 1 : INTRODUCTION
+     ========================= -->
+
+<div id="screen1">
+
+
+    <div class="topBar">
+    </div>
+
+
+    <div class="animBG">
+
+        <img class="logo_intro" 
+             src="./assets/logo_hi-eJOEEBZh.png" 
+             alt="Logo of the band"/>
+
+        <img class="anim_intro" 
+             src="./assets/chara2-D5-rPsUj.gif" 
+             alt="Animation of the characters entering the car"/>
+
+
+        <button class="startBtn" onclick="startGame()">
+            CLICK TO START
+        </button>
+
+        <button id="startTouchBtn" onclick="startGame()">START</button>
+
+    </div>
+
+
+
+    <div class="bottomBar">
+
+        <div class="instruction1">
+
+            <p>
+                USE YOUR KEYBOARD TO CONTROL THE GEEP
+
+                <span class="inst_arrow">&#129136;</span> = steer left
+
+                <span class="kbOnly"><span class="inst_arrow">&#129139;</span></span> <span class="gpOnly"><span class="inst_arrow gpBig">&#127291;</span></span> = brake
+
+                <span class="kbOnly"><span class="inst_arrow">&#129137;</span></span> <span class="gpOnly"><span class="inst_arrow gpBig">&#127297;</span></span> = accelerate
+
+                <span class="inst_arrow">&#129138;</span> = steer right
+            </p>
+
+
+            <p>
+                "<span class="kbOnly">R</span><span class="gpOnly gpBig">&#9422;</span>" will reset you if you crash
+
+                <span class="kbOnly"><span class="inst_spacebar">
+                    SPACEBAR
+                </span></span> <span class="gpOnly"><span class="inst_arrow gpBig">&#9399;</span></span>
+
+                = HANDBRAKE
+            </p>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+<!-- =========================
+     SCREEN 2 : GAME
+     ========================= -->
+
+
+<div id="screen2" style="display:none;">
+
+
+    <div class="topBar">
+
+
+        <button 
+            onclick="soundBtnToggle()" 
+            class="btnScreen2 soundBtn" 
+            id="soundBtn">
+
+            sound <br> Off
+
+        </button>
+
+        <span class="gpOnly gpLabelSound">[LB]</span>
+
+
+
+        <button 
+            onclick="musicBtnToggle()" 
+            class="btnScreen2 musicBtn" 
+            id="musicBtn">
+
+            music <br> Off
+
+        </button>
+
+        <span class="gpOnly gpLabelMusic">[RB]</span>
+
+
+
+        <button 
+            class="btnScreen2 restartBtn" 
+            onclick="restartGame()">
+
+            restart <br> game
+
+        </button>
+
+        <span class="gpOnly gpLabelRestart">&#10697;</span>
+
+
+    </div>
+
+
+
+    <!-- Three.js renderer will be inserted here -->
+    <div id="gameContainer" class="game"></div>
+
+    <!-- Contrôles tactiles : visibles uniquement si un appareil tactile est
+         détecté (classe "touchDetected" posée sur <body> par main.js).
+         Placés DANS #screen2 : ils n'existent pas visuellement sur l'écran d'intro. -->
+    <div id="touchControls">
+
+        <!-- plein écran : haut gauche, sous la top bar -->
+        <button id="fullscreenTouchBtn">&#9974;</button>
+
+        <!-- direction : bas gauche, axe horizontal -->
+        <div id="steerBtns">
+            <button id="leftTouchBtn" class="touchDriveBtn">&#8592;</button>
+            <button id="rightTouchBtn" class="touchDriveBtn">&#8594;</button>
+        </div>
+
+        <!-- pédales : bas droite, axe vertical (avancer au-dessus de reculer) -->
+        <div id="pedalBtns">
+            <button id="fwdTouchBtn" class="touchDriveBtn">&#8679;</button>
+            <button id="backTouchBtn" class="touchDriveBtn">&#8681;</button>
+        </div>
+
+        <!-- flip : bas droite, aligné horizontalement avec les pédales,
+             mais décalé à leur gauche pour ne pas être dans le même axe -->
+        <button id="flipTouchBtn">&#8634;</button>
+
+    </div>
+
+    <div class="bottomBar">
+
+        <p class="instruction2">
+
+            <span class="inst_arrow">&#129136;</span> = steer left
+
+            <span class="kbOnly"><span class="inst_arrow">&#129139;</span></span> <span class="gpOnly"><span class="inst_arrow gpBig">&#127291;</span></span> = brake
+
+            <span class="kbOnly"><span class="inst_arrow">&#129137;</span></span> <span class="gpOnly"><span class="inst_arrow gpBig">&#127297;</span></span> = accelerate
+
+            <span class="inst_arrow">&#129138;</span> = steer right
+
+            <br>
+
+            <span class="kbOnly"><span class="inst_spacebar">
+                SPACEBAR
+            </span></span> <span class="gpOnly"><span class="inst_arrow gpBig">&#9399;</span></span>
+
+            = HANDBRAKE
+
+            <br class="kbOnly">
+
+            "<span class="kbOnly">R</span><span class="gpOnly gpBig">&#9422;</span>" will reset you if you crash
+
+        </p>
+
+
+        <img 
+            class="logo_bottom" 
+            src="./assets/logo_hi-eJOEEBZh.png" 
+            alt="Logo of the band"/>
+
+
+    </div>
+
+
+</div> <!-- end screen2 -->
+
+
+
+<!-- =========================
+     GAME SCRIPT
+     ========================= -->
+
+
+
+<!-- =========================
+     SCREEN MANAGEMENT + AUDIO
+     ========================= -->
+<script>
+
+
+
+// =========================
+// SCREEN MANAGEMENT
+// =========================
+
+
+function startGame() {
+
+    document.getElementById("screen1").style.display = "none";
+
+    document.getElementById("screen2").style.display = "block";
+
+    // Démarre la boucle Three.js/Rapier au moment exact du clic !
+    if (typeof window.startGameLoop === "function") {
+        window.startGameLoop();
+    }
+
+}
+
+
+
+function restartGame() {
+
+    // Réinitialise d'abord les positions physiques et coupe la boucle
+    if (typeof window.resetPhysicsAndScene === "function") {
+        window.resetPhysicsAndScene();
+    }
+
+    document.getElementById("screen2").style.display = "none";
+
+    document.getElementById("screen1").style.display = "block";
+
+}
+
+
+</script>
+
+<!-- Curseur personnalisé volant -->
+<div id="customCursor"></div>
+
+</body>
+
+</html>
