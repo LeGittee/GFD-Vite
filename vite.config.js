@@ -11,7 +11,7 @@ export default defineConfig({
     topLevelAwait(),
     wasm()
   ],
-  base: './',
+  base: '/GFD-Vite/',
     build: { 
       target: "ES2022",
       emptyOutDir: true,
